@@ -1,0 +1,43 @@
+# Blur (BLES00759) - RPCS3 custom config, tuned for stability (PS5 / Zen 2, 8C/16T, RDNA 2)
+# Place in: <rpcs3>/config/custom_configs/config_BLES00759.yml
+# Key names checked against RPCS3 master (rpcs3/Emu/system_config.h).
+Core:
+  PPU Decoder: Recompiler (LLVM)
+  SPU Decoder: Recompiler (LLVM)
+  # Physics/collisions run as SPU jobs. "Approximate" can produce NaN/Inf
+  # on extreme values (crash impacts) -> game asserts. Most likely cause of the crash.
+  SPU XFloat Accuracy: Accurate
+  # Mega/Giga blocks are faster but can break SPU code -> crashes.
+  SPU Block Size: Safe
+  # 0 = automatic. Forcing 3 limits parallel SPU threads exactly during physics spikes.
+  Preferred SPU Threads: 0
+  Max SPURS Threads: 6
+  SPU loop detection: false
+  SPU Cache: true
+  # PPU float accuracy (game logic side of physics)
+  PPU Vector NaN Handling: true
+  PPU Accurate Vector NaN Values: true
+  Use Accurate DFMA: true
+  # Sync safety between PPU/SPU/RSX memory
+  Accurate Cache Line Stores: true
+  Accurate RSX reservation access: true
+  Thread Scheduler Mode: Operating System
+Video:
+  Renderer: Vulkan
+  Shader Mode: Async Recompiler (multi-threaded)
+  Write Color Buffers: true
+  Read Color Buffers: false
+  Write Depth Buffer: false
+  Read Depth Buffer: false
+  # Extra RSX thread = more race conditions; 8 cores are already busy with SPUs.
+  Multithreaded RSX: false
+  Strict Rendering Mode: false
+  Relaxed ZCULL Sync: false
+  Accurate ZCULL stats: true
+  Disable ZCull Occlusion Queries: false
+  # Must be a plain number, no "%".
+  Resolution Scale: 100
+  Vulkan:
+    # Async streaming causes crashes with shared memory/driver; off for stability.
+    Asynchronous Texture Streaming: false
+    Asynchronous Queue Scheduler: Safe
